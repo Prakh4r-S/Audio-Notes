@@ -1,0 +1,40 @@
+# Render Blueprint: New > Blueprint, point it at this repo, then fill in the
+# secret values in the dashboard (they are marked sync: false).
+services:
+  - type: web
+    name: audio-notes-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: STORAGE_BACKEND
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: recordings
+      - key: GNANI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: RUN_WORKER_IN_PROCESS
+        value: "true"
+      - key: SECRET_KEY
+        generateValue: true
+
+  # Optional, paid plan only: run the worker as its own service and set
+  # RUN_WORKER_IN_PROCESS=false on the web service above.
+  # - type: worker
+  #   name: audio-notes-worker
+  #   runtime: docker
+  #   rootDir: backend
+  #   dockerfilePath: ./Dockerfile
+  #   dockerCommand: python -m app.worker
+  #   plan: starter
+  #   envVars: (same as above)
